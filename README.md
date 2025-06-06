@@ -1,14 +1,14 @@
 # dataSeeker
 
-dataSeeker is a Spring Boot sample application that demonstrates how to retrieve and query documents on a chosen topic using LangChain4j and OpenAI models. The structure is inspired by the Cat Application and relies on Spring Boot, JDBC, and Thymeleaf.
+dataSeeker is a Spring Boot sample application that demonstrates how to retrieve and query documents on a chosen topic using LangChain4j and OpenAI models. The structure is inspired by the Cat Application and relies on Spring Boot and Thymeleaf. Document data is stored in memory, so no database is required.
 
 ## 1. Maven project setup
 
 Create a standard Spring Boot project with a `pom.xml` that includes dependencies for:
 
 - `spring-boot-starter-web` – REST endpoints
-- `spring-boot-starter-jdbc` – database access
 - `spring-boot-starter-thymeleaf` – HTML views
+- (no database dependency required)
 - `io.github.cdimascio:dotenv-java` – loads variables from a `.env` file
 - `dev.langchain4j:langchain4j` and `langchain4j-open-ai` – access OpenAI models
 
@@ -19,10 +19,6 @@ A snippet of the dependencies section might look like:
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -42,6 +38,8 @@ A snippet of the dependencies section might look like:
     </dependency>
 </dependencies>
 ```
+
+Because documents are stored in memory, no JDBC driver or database configuration is needed.
 
 Set the Java version and Spring Boot plugin in the build section as usual.
 
@@ -64,7 +62,7 @@ Implement a `DocumentController` that exposes REST endpoints for querying and ma
 - `GET /documents/{id}` – retrieve an individual document.
 - `POST /documents` – add a document (for example, text or URL) to the repository and store embeddings for later queries.
 
-These endpoints interact with a service layer that handles document storage (via JDBC) and uses LangChain4j to build prompts or retrieval-augmented generation workflows.
+These endpoints interact with a service layer that stores documents in memory and uses LangChain4j to build prompts or retrieval-augmented generation workflows.
 
 ## 4. README instructions
 
