@@ -42,6 +42,7 @@ public class DocumentController {
                          @RequestParam(value = "type", required = false) List<DocumentType> type,
                          Model model) {
         model.addAttribute("documents", service.search(query, type));
+        model.addAttribute("answer", service.ask(query));
         return "index";
     }
 }

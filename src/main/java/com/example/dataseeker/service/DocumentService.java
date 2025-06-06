@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentService {
@@ -60,5 +61,23 @@ public class DocumentService {
                         (d.getContent() != null && d.getContent().toLowerCase().contains(query.toLowerCase())))
                 .filter(d -> types == null || types.isEmpty() || types.contains(d.getType()))
                 .toList();
+    }
+
+    /**
+     * Ask OpenAI to answer the given query based on all stored documents.
+     * The answer will only be generated if the OpenAI service is configured.
+     */
+    public String ask(String query) {
+        if (openAiService == null || query == null || query.isBlank()) {
+            return null;
+        }
+
+        String context = repository.findAll().stream()
+                .map(Document::getContent)
+                .filter(c -> c != null && !c.isBlank())
+                .collect(Collectors.joining("\n"));
+
+        String prompt = "Given the following documents:\n" + context + "\nAnswer the question: " + query;
+        return openAiService.generate(prompt);
     }
 }

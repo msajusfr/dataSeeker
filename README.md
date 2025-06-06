@@ -60,7 +60,7 @@ The `dotenv-java` library reads these variables so they can be injected as envir
 
 Implement a `DocumentController` that exposes REST endpoints for querying and managing documents:
 
-- `GET /search?query=term` – search stored documents by term and return an answer using LangChain4j with OpenAI.
+- `GET /search?query=term` – search stored documents by term. If OpenAI credentials are configured the service also returns an answer generated with LangChain4j.
 - `GET /documents/{id}` – retrieve an individual document.
 - `POST /documents` – add a document (for example, text or URL) to the repository and store embeddings for later queries.
 
