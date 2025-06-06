@@ -65,6 +65,37 @@ public class DocumentService {
     }
 
     /**
+     * Ask OpenAI to provide a list of links to the requested document types about the given query.
+     * This returns {@code null} if the OpenAI service is not configured.
+     */
+    public String askForLinks(String query, List<DocumentType> types) {
+        if (openAiService == null || query == null || query.isBlank()) {
+            return null;
+        }
+
+        String typeDescription;
+        if (types == null || types.isEmpty()) {
+            typeDescription = "relevant web pages";
+        } else {
+            typeDescription = types.stream()
+                    .map(t -> t == DocumentType.PDF ? "PDF files" : "HTML pages")
+                    .collect(Collectors.joining(" and "));
+        }
+
+        String prompt = "Provide a list of direct links to " + typeDescription +
+                " about \"" + query + "\". " +
+                "Format the response as bullet points with one link per line.";
+        return openAiService.generate(prompt);
+    }
+
+    /**
+     * @return {@code true} if the OpenAI service is configured and available.
+     */
+    public boolean isOpenAiConfigured() {
+        return openAiService != null;
+    }
+
+    /**
      * Ask OpenAI to answer the given query based on all stored documents.
      * The answer will only be generated if the OpenAI service is configured.
      */
