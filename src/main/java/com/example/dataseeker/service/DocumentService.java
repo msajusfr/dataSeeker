@@ -1,6 +1,7 @@
 package com.example.dataseeker.service;
 
 import com.example.dataseeker.model.Document;
+import com.example.dataseeker.model.DocumentType;
 import com.example.dataseeker.repository.DocumentRepository;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,10 @@ public class DocumentService {
 
     @PostConstruct
     public void init() {
+        // Add a couple of sample documents for demonstration
+        repository.save(new Document(null, "Sample PDF", DocumentType.PDF, "/sample.pdf", "Sample pdf content"));
+        repository.save(new Document(null, "Sample HTML", DocumentType.HTML, "/sample.html", "Sample html content"));
+
         if (apiKey != null && !apiKey.isEmpty()) {
             openAiService = OpenAiChatModel.builder()
                     .apiKey(apiKey)
@@ -48,12 +53,12 @@ public class DocumentService {
         return repository.findAll();
     }
 
-    public String search(String query) {
-        if (openAiService == null) {
-            return "OpenAI not configured";
-        }
-        // simple prompt for now
-        String prompt = "Find relevant information about: " + query;
-        return openAiService.generate(prompt).content();
+    public List<Document> search(String query, List<DocumentType> types) {
+        return repository.findAll().stream()
+                .filter(d -> query == null || query.isBlank() ||
+                        (d.getName() != null && d.getName().toLowerCase().contains(query.toLowerCase())) ||
+                        (d.getContent() != null && d.getContent().toLowerCase().contains(query.toLowerCase())))
+                .filter(d -> types == null || types.isEmpty() || types.contains(d.getType()))
+                .toList();
     }
 }

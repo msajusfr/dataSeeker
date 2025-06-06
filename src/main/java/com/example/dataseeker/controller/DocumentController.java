@@ -1,7 +1,9 @@
 package com.example.dataseeker.controller;
 
 import com.example.dataseeker.model.Document;
+import com.example.dataseeker.model.DocumentType;
 import com.example.dataseeker.service.DocumentService;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,8 @@ public class DocumentController {
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("documents", service.findAll());
         return "index";
     }
 
@@ -35,9 +38,10 @@ public class DocumentController {
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam String query, Model model) {
-        String answer = service.search(query);
-        model.addAttribute("answer", answer);
+    public String search(@RequestParam String query,
+                         @RequestParam(value = "type", required = false) List<DocumentType> type,
+                         Model model) {
+        model.addAttribute("documents", service.search(query, type));
         return "index";
     }
 }
