@@ -27,7 +27,7 @@ public class DocumentController {
 
     @GetMapping("/documents/{id}")
     @ResponseBody
-    public Document getDocument(@PathVariable Long id) {
+    public Document getDocument(@PathVariable("id") Long id) {
         return service.findById(id).orElse(null);
     }
 
@@ -38,7 +38,7 @@ public class DocumentController {
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam String query,
+    public String search(@RequestParam("query") String query,
                          @RequestParam(value = "type", required = false) List<DocumentType> type,
                          Model model) {
         model.addAttribute("documents", service.search(query, type));
