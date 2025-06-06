@@ -2,12 +2,11 @@ package com.example.dataseeker.service;
 
 import com.example.dataseeker.model.Document;
 import com.example.dataseeker.repository.DocumentRepository;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiService;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +14,7 @@ import java.util.Optional;
 public class DocumentService {
 
     private final DocumentRepository repository;
-    private OpenAiService openAiService;
+    private OpenAiChatModel openAiService;
 
     @Value("${OPENAI_API_KEY:}")
     private String apiKey;
@@ -30,7 +29,10 @@ public class DocumentService {
     @PostConstruct
     public void init() {
         if (apiKey != null && !apiKey.isEmpty()) {
-            openAiService = OpenAiService.builder().apiKey(apiKey).modelName(model).build();
+            openAiService = OpenAiChatModel.builder()
+                    .apiKey(apiKey)
+                    .modelName(model)
+                    .build();
         }
     }
 
@@ -52,6 +54,6 @@ public class DocumentService {
         }
         // simple prompt for now
         String prompt = "Find relevant information about: " + query;
-        return openAiService.generate(TextSegment.from(prompt)).content();
+        return openAiService.generate(prompt).content();
     }
 }
