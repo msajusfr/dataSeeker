@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>dataSeeker</title>
+</head>
+<body>
+<h1>dataSeeker</h1>
+<form action="/search" method="get">
+    <input type="text" name="query" placeholder="Enter search term"/>
+    <button type="submit">Search</button>
+</form>
+<div th:if="${answer}">
+    <h2>Answer</h2>
+    <p th:text="${answer}"></p>
+</div>
+</body>
+</html>
