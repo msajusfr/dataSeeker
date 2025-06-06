@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.Locale;
 
 @Service
 public class DocumentService {
@@ -56,8 +57,8 @@ public class DocumentService {
     public List<Document> search(String query, List<DocumentType> types) {
         return repository.findAll().stream()
                 .filter(d -> query == null || query.isBlank() ||
-                        (d.getName() != null && d.getName().toLowerCase().contains(query.toLowerCase())) ||
-                        (d.getContent() != null && d.getContent().toLowerCase().contains(query.toLowerCase())))
+                        (d.getName() != null && d.getName().toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))) ||
+                        (d.getContent() != null && d.getContent().toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))))
                 .filter(d -> types == null || types.isEmpty() || types.contains(d.getType()))
                 .toList();
     }
