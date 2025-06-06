@@ -8,11 +8,18 @@
 <h1>dataSeeker</h1>
 <form action="/search" method="get">
     <input type="text" name="query" placeholder="Enter search term"/>
+    <label><input type="checkbox" name="type" value="PDF"/> PDF</label>
+    <label><input type="checkbox" name="type" value="HTML"/> HTML</label>
     <button type="submit">Search</button>
 </form>
-<div th:if="${answer}">
-    <h2>Answer</h2>
-    <p th:text="${answer}"></p>
+
+<div th:if="${documents}">
+    <h2>Results</h2>
+    <ul>
+        <li th:each="doc : ${documents}">
+            <a th:href="@{${doc.url}}" th:text="${doc.name}"></a>
+        </li>
+    </ul>
 </div>
 </body>
 </html>
