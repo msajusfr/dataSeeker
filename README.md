@@ -48,8 +48,8 @@ Set the Java version and Spring Boot plugin in the build section as usual.
 Store API secrets in a `.env` file in the project root:
 
 ```
-OPENAI_API_KEY=your-openai-api-key
-OPENAI_MODEL=gpt-3.5-turbo
+API_KEY=your-openai-api-key
+MODEL_NAME=gpt-3.5-turbo
 ```
 
 The `dotenv-java` library reads these variables so they can be injected as environment properties.
@@ -71,7 +71,7 @@ The README should document how to configure environment variables, build, and ru
 Typical usage:
 
 ```bash
-# copy .env.example to .env and fill in your OpenAI credentials
+# copy .env.example to .env and set your API key and model name
 mvn clean package
 java -jar target/dataSeeker-0.0.1-SNAPSHOT.jar
 ```
