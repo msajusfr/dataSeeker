@@ -35,4 +35,9 @@ class DocumentServiceTest {
         List<Document> result = service.search("", null);
         assertEquals(2, result.size());
     }
+
+    @Test
+    void askForLinksReturnsNullWhenNoOpenAiService() {
+        assertNull(service.askForLinks("java", List.of(DocumentType.PDF)));
+    }
 }

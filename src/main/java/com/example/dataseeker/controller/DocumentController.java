@@ -42,7 +42,13 @@ public class DocumentController {
                          @RequestParam(value = "type", required = false) List<DocumentType> type,
                          Model model) {
         model.addAttribute("documents", service.search(query, type));
-        model.addAttribute("answer", service.ask(query));
+        String answer;
+        if (type != null && !type.isEmpty()) {
+            answer = service.askForLinks(query, type);
+        } else {
+            answer = service.ask(query);
+        }
+        model.addAttribute("answer", answer);
         return "index";
     }
 }
