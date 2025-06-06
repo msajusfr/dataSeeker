@@ -19,10 +19,10 @@ public class DocumentService {
     private final DocumentRepository repository;
     private OpenAiChatModel openAiService;
 
-    @Value("${OPENAI_API_KEY:}")
+    @Value("${API_KEY:}")
     private String apiKey;
 
-    @Value("${OPENAI_MODEL:gpt-3.5-turbo}")
+    @Value("${MODEL_NAME:gpt-3.5-turbo}")
     private String model;
 
     public DocumentService(DocumentRepository repository) {
