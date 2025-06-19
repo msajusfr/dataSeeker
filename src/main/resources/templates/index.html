@@ -2,28 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>dataSeeker</title>
+    <title>A2A Demo</title>
+    <script>
+        function setup() {
+            const master = document.getElementById('master');
+            master.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    fetch('/message', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: master.value
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            document.getElementById('agent1').value = data.optimizedPrompt;
+                            document.getElementById('agent2').value = data.graphData;
+                            master.value = '';
+                        });
+                }
+            });
+        }
+        window.addEventListener('load', setup);
+    </script>
 </head>
 <body>
-<h1>dataSeeker</h1>
-<form action="/search" method="get">
-    <input type="text" name="query" placeholder="Enter search term"/>
-    <label><input type="checkbox" name="type" value="PDF"/> PDF</label>
-    <label><input type="checkbox" name="type" value="HTML"/> HTML</label>
-    <button type="submit">Search</button>
-</form>
-
-<div th:if="${documents}">
-    <h2>Results</h2>
-    <ul>
-        <li th:each="doc : ${documents}">
-            <a th:href="@{${doc.url}}" th:text="${doc.name}"></a>
-        </li>
-    </ul>
+<h1>A2A 3-Agent Demo</h1>
+<div>
+    <h2>Master Agent</h2>
+    <textarea id="master" rows="4" cols="50" placeholder="Type message and press Enter"></textarea>
 </div>
-<div th:if="${answer}">
-    <h2>Assistant Response</h2>
-    <pre th:text="${answer}"></pre>
+<div>
+    <h2>Agent 1 (Prompt Optimizer)</h2>
+    <textarea id="agent1" rows="4" cols="50" readonly></textarea>
+</div>
+<div>
+    <h2>Agent 2 (Graph Creator)</h2>
+    <textarea id="agent2" rows="4" cols="50" readonly></textarea>
 </div>
 </body>
 </html>
