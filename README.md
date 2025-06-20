@@ -14,3 +14,24 @@ Run the application with:
 ```bash
 mvn spring-boot:run
 ```
+
+## MCP Quarkus server
+
+This project also embeds a small MCP server implemented with Quarkus. It exposes
+an `optimizePrompt` tool which is used by `PromptOptimizerAgent` via the MCP
+protocol.
+
+Build the runnable jar with:
+
+```bash
+mvn package -Dquarkus.package.type=uber-jar
+```
+
+Run the server using the generated jar:
+
+```bash
+java -jar target/dataSeeker-*-runner.jar
+```
+
+`PromptOptimizerAgent` can then connect to this process using the MCP stdio
+transport.
