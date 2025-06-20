@@ -10,6 +10,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class PromptOptimizerAgent {
     private final McpClient mcpClient;
 
     public PromptOptimizerAgent() {
-        this("java -jar target/dataSeeker-*-runner.jar", System.getenv("OPENAI_API_KEY"));
+        this("java -jar "+System.getProperty("user.dir")+ File.separator + "target" + File.separator + "dataSeeker-0.0.1-SNAPSHOT.jar", System.getenv("OPENAI_API_KEY"));
     }
 
     public PromptOptimizerAgent(String mcpCommand, String openAiKey) {
