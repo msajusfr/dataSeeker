@@ -7,10 +7,13 @@ import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
 
+@Component
 public class PromptOptimizerAgent {
 
     public interface Optimizer {
@@ -19,6 +22,10 @@ public class PromptOptimizerAgent {
 
     private final Optimizer optimizer;
     private final McpClient mcpClient;
+
+    public PromptOptimizerAgent() {
+        this("java -jar target/dataSeeker-*-runner.jar", System.getenv("OPENAI_API_KEY"));
+    }
 
     public PromptOptimizerAgent(String mcpCommand, String openAiKey) {
         // 1️⃣ Configuration du client MCP (stdio)
@@ -52,21 +59,12 @@ public class PromptOptimizerAgent {
         return optimizer.optimize(prompt);
     }
 
+    @PreDestroy
     public void close() {
         try {
             mcpClient.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void main(String[] args) {
-        PromptOptimizerAgent agent = new PromptOptimizerAgent("java -jar target/optimize-prompt-1.0-SNAPSHOT.jar", System.getenv("OPENAI_API_KEY"));
-        try {
-            String result = agent.optimize("Améliore ce prompt : 'Bonjour, aide moi.'");
-            System.out.println("Résultat optimisé : " + result);
-        } finally {
-            agent.close();
         }
     }
 }
