@@ -1,34 +1,76 @@
 package com.example.dataseeker.agent;
 
-import com.example.dataseeker.tool.PromptOptimizerTool;
-import dev.langchain4j.messenger.console.StdioMessenger;
-import dev.langchain4j.mcp.McpClient;
-import dev.langchain4j.agent.tool.Tools;
-import org.springframework.stereotype.Component;
+import dev.langchain4j.mcp.client.DefaultMcpClient;
+import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
+import dev.langchain4j.mcp.McpToolProvider;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.ToolProvider;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 
-import jakarta.annotation.PostConstruct;
+import java.time.Duration;
+import java.util.List;
 
-@Component
 public class PromptOptimizerAgent {
 
-    private final PromptOptimizerTool tool;
-    private McpClient client;
-
-    public PromptOptimizerAgent(PromptOptimizerTool tool) {
-        this.tool = tool;
+    public interface Optimizer {
+        String optimize(String prompt);
     }
 
-    @PostConstruct
-    public void startClient() {
-        Tools tools = Tools.builder().add(tool).build();
-        client = McpClient.builder()
-                .tools(tools)
-                .messenger(new StdioMessenger())
+    private final Optimizer optimizer;
+    private final McpClient mcpClient;
+
+    public PromptOptimizerAgent(String mcpCommand, String openAiKey) {
+        // 1️⃣ Configuration du client MCP (stdio)
+        mcpClient = new DefaultMcpClient.Builder()
+                .transport(new StdioMcpTransport.Builder()
+                        .command(List.of(mcpCommand))
+                        .logEvents(true)
+                        .build())
+                .protocolVersion("2024-11-05")
+                .toolExecutionTimeout(Duration.ofSeconds(30))
                 .build();
-        client.start();
+
+        // 2️⃣ Création du ToolProvider MCP
+        ToolProvider toolProvider = McpToolProvider.builder()
+                .mcpClients(List.of(mcpClient))
+                .build();
+
+        // 3️⃣ Création du modèle OpenAI
+        OpenAiChatModel chatModel = OpenAiChatModel.builder()
+                .apiKey(openAiKey)
+                .build();
+
+        // 4️⃣ Construction du service AI
+        optimizer = AiServices.builder(Optimizer.class)
+                .chatModel(chatModel)
+                .toolProvider(toolProvider)
+                .build();
     }
 
     public String optimize(String prompt) {
-        return tool.optimize(prompt);
+        return optimizer.optimize(prompt);
+    }
+
+    public void close() {
+        try {
+            mcpClient.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        PromptOptimizerAgent agent = new PromptOptimizerAgent("mcp-optimize-server", System.getenv("OPENAI_API_KEY"));
+        try {
+            String result = agent.optimize("Améliore ce prompt : 'Bonjour, aide moi.'");
+            System.out.println("Résultat optimisé : " + result);
+        } finally {
+            agent.close();
+        }
     }
 }
+
+
+
+
