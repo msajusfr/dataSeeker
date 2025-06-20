@@ -61,7 +61,7 @@ public class PromptOptimizerAgent {
     }
 
     public static void main(String[] args) {
-        PromptOptimizerAgent agent = new PromptOptimizerAgent("mcp-optimize-server", System.getenv("OPENAI_API_KEY"));
+        PromptOptimizerAgent agent = new PromptOptimizerAgent("java -jar target/optimize-prompt-1.0-SNAPSHOT.jar", System.getenv("OPENAI_API_KEY"));
         try {
             String result = agent.optimize("Améliore ce prompt : 'Bonjour, aide moi.'");
             System.out.println("Résultat optimisé : " + result);
